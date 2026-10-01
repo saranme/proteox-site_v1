@@ -1,0 +1,5 @@
+# Canonical host is www.proteox.com (matches <link rel="canonical">, sitemap and OG tags)
+https://proteox.com/* https://www.proteox.com/:splat 301
+http://proteox.com/* https://www.proteox.com/:splat 301
+# Short URL for the privacy notice linked from the footer
+/privacy /privacy.html 200

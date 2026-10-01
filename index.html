@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proteox — Longitudinal plasma proteomics for clinical monitoring</title>
+  <meta name="description" content="Proteox measures how a patient's plasma proteome changes over time, against their own baseline, so clinics can see the biological effect of an intervention. ~3,000 proteins per sample, population-anchored to UK Biobank." />
+  <link rel="canonical" href="https://www.proteox.com/" />
+
+  <!-- Open Graph / social preview: /og-image.png (1200x630), served from proteox.com -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Proteox" />
+  <meta property="og:title" content="Proteox — Longitudinal plasma proteomics for clinical monitoring" />
+  <meta property="og:description" content="Measure the change, not the snapshot. Within-person plasma proteome monitoring for clinics running hormone and metabolic therapies." />
+  <meta property="og:url" content="https://www.proteox.com/" />
+  <meta property="og:image" content="https://www.proteox.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Favicon: /favicon.ico for legacy browsers, inline SVG for modern ones. -->
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233358D4'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Inter,Arial,sans-serif' font-weight='700' font-size='20' fill='%23fff'%3EP%3C/text%3E%3C/svg%3E" />
+
+
+  <style>
+    /* Fonts served from proteox.com (/fonts/). Inter only — OFL, license in /fonts/. */
+    @font-face { font-family: "Inter"; src: url("/fonts/Inter-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Inter"; src: url("/fonts/Inter-Medium.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+    @font-face { font-family: "Inter"; src: url("/fonts/Inter-SemiBold.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+    @font-face { font-family: "Inter"; src: url("/fonts/Inter-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+    @font-face { font-family: "Inter"; src: url("/fonts/Inter-BoldItalic.woff2") format("woff2"); font-weight: 700; font-style: italic; font-display: swap; }
+    @font-face { font-family: "Instrument Serif"; src: url("/fonts/InstrumentSerif-Italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+    @font-face { font-family: "Instrument Serif"; src: url("/fonts/InstrumentSerif-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Inter"; src: url("/fonts/Inter-Italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+    @font-face { font-family: "Inter"; src: url("/fonts/Inter-MediumItalic.woff2") format("woff2"); font-weight: 500; font-style: italic; font-display: swap; }
+    @font-face { font-family: "Inter"; src: url("/fonts/Inter-SemiBoldItalic.woff2") format("woff2"); font-weight: 600; font-style: italic; font-display: swap; }
+
+    /* ---------- Tokens ---------- */
+    :root {
+      --bg-deep: #0A0B0F;        /* footer */
+      --bg-dark: #0A0B0F;        /* black sections */
+      --bg-light: #FFFFFF;       /* white */
+      --bg-tint: #F5F7FB;        /* alternate light */
+      --fg-light: #0A0B0F;       /* text on white */
+      --fg-dark: #F7F8FC;        /* text on black */
+      --muted-light: #5C6474;
+      --muted-dark: #9AA3B5;
+      --accent: #7A95F0;         /* blue on black */
+      --accent-deep: #3358D4;    /* blue on white */
+      --line-light: rgba(10, 11, 15, 0.10);
+      --line-dark: rgba(247, 248, 252, 0.14);
+      --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --max: 1120px;
+      --gutter: clamp(20px, 4vw, 48px);
+      --radius: 10px;
+
+      /* Type scale — one ratio, nothing outside it */
+      --t-xs: 13px;
+      --t-s: 15px;
+      --t-m: 17px;
+      --t-l: 20px;
+      --t-xl: clamp(22px, 2.4vw, 28px);
+      --t-2xl: clamp(36px, 4.8vw, 64px);
+      --t-3xl: clamp(52px, 7vw, 92px);
+      --t-num: clamp(32px, 3.4vw, 44px);
+      --blue-tint: #EFF2FC;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    body {
+      margin: 0; font-family: var(--font); font-size: var(--t-m); line-height: 1.6;
+      color: var(--fg-light); background: var(--bg-light); -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+
+    h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; line-height: 1.12; margin: 0; }
+    h1, h2 { font-weight: 700; letter-spacing: -0.045em; line-height: 1.0; }
+    h1 em, h2 em { font-style: italic; font-weight: 400; letter-spacing: -0.03em; color: var(--accent-deep); }
+    
+    h1 { font-size: var(--t-3xl); }
+    h2 { font-size: var(--t-2xl); max-width: 20ch; }
+    h3 { font-size: var(--t-l); line-height: 1.3; }
+    p { margin: 0 0 1em; }
+    p:last-child { margin-bottom: 0; }
+    .lead { font-size: 18px; line-height: 1.6; max-width: none; color: var(--muted-light); }
+    .section-dark .lead { color: var(--muted-light); }
+
+    /* ---------- Navigation ---------- */
+    .nav { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line-light); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+    
+    .logo-text { display: inline-block; background: var(--accent-deep); color: #fff; padding: 5px 11px 6px; border-radius: 6px; font-weight: 700; font-size: 19px; letter-spacing: -0.035em; line-height: 1.1; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-links a { text-decoration: none; font-size: var(--t-s); font-weight: 500; color: var(--fg-light); }
+    .nav-links a:hover { color: var(--accent-deep); }
+    .nav-toggle { display: none; background: none; border: 1px solid var(--line-light); border-radius: 6px; padding: 8px 12px; font: 500 var(--t-s) var(--font); cursor: pointer; color: inherit; }
+    @media (max-width: 1000px) {
+      .nav-toggle { display: inline-block; }
+      .nav-links { display: none; position: absolute; left: 0; right: 0; top: 64px; flex-direction: column; align-items: stretch; gap: 0; background: var(--bg-light); border-bottom: 1px solid var(--line-light); padding: 8px var(--gutter) 16px; }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 0; border-bottom: 1px solid var(--line-light); }
+    }
+
+    /* ---------- Buttons ---------- */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 20px; border-radius: 6px; font: 600 var(--t-s) var(--font); text-decoration: none; cursor: pointer; border: 0; }
+    .btn-yellow { background: var(--accent-deep); color: #fff; }
+    .btn-yellow:hover { background: #2A49B8; }
+    .btn-ink { background: var(--fg-light); color: var(--bg-light); }
+    .link-quiet { font-weight: 500; font-size: var(--t-s); text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px; opacity: .85; }
+    .link-quiet:hover { opacity: 1; }
+
+    /* ---------- Sections ---------- */
+    .section { padding: clamp(80px, 9vw, 128px) 0; }
+    .section-dark { background: var(--bg-tint); color: var(--fg-light); }
+    .section-tint { background: var(--bg-tint); }
+    body { counter-reset: sec; }
+    .section { counter-increment: sec; }
+    .kicker { display: inline-flex; align-items: center; gap: 12px; font-size: var(--t-l); font-weight: 700; font-style: normal; letter-spacing: -0.02em; color: var(--fg-light); margin-bottom: 24px; }
+    
+    
+    .section-head { margin-bottom: clamp(40px, 5vw, 64px); }
+    .section-head .lead { margin-top: 24px; }
+    .split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 64px); align-items: start; }
+    .block { margin-top: clamp(48px, 6vw, 80px); }
+    .lead + .lead { margin-top: 18px; }
+    @media (max-width: 820px) { .split { grid-template-columns: 1fr; } }
+
+    /* ---------- Hero ---------- */
+    .hero { background: var(--bg-light); color: var(--fg-light); border-bottom: 1px solid var(--line-light); }
+    .hero-inner { display: flex; flex-direction: column; justify-content: center; min-height: calc(100vh - 64px); padding: clamp(64px, 8vw, 96px) var(--gutter); }
+    .hero h1 { max-width: 12ch; line-height: 0.96; }
+    .hero .lead { margin-top: 28px; max-width: none; color: var(--muted-light); }
+    .hero-for { display: block; font-weight: 500; font-style: italic; font-size: var(--t-l); line-height: 1.3; color: var(--accent-deep); margin-bottom: 12px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; margin-top: 32px; }
+    .hero-actions .link-quiet { color: var(--fg-light); }
+    .hero-facts { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line-light); }
+    .hero-facts strong { display: block; font-size: var(--t-num); font-weight: 700; font-style: italic; letter-spacing: -0.04em; line-height: 1; color: var(--accent-deep); }
+    .hero-facts span { font-size: var(--t-xs); color: var(--muted-light); }
+    @media (max-width: 920px) { .hero-inner { min-height: 0; } }
+
+    h1, h2 { overflow-wrap: anywhere; }
+    
+    
+    @media (max-width: 560px) { .compare-row > div { padding: 14px 16px; font-size: var(--t-s); } .compare-row > div:last-child { padding-left: 26px; } }
+
+    .steps-title { font-size: var(--t-xl); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 32px; max-width: none; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 48px); counter-reset: step; }
+    @media (max-width: 720px) { .steps { grid-template-columns: 1fr; } }
+    .step { padding: 24px 0 0; counter-increment: step; position: relative; }
+    .step-head::before { content: counter(step, decimal-leading-zero); display: inline-block; margin-right: 12px; font-size: var(--t-num); font-weight: 700; font-style: italic; letter-spacing: -0.04em; line-height: 1; color: var(--accent-deep); margin-bottom: 16px; }
+    .step-n { display: inline; font-size: var(--t-l); font-weight: 500; font-style: italic; color: var(--accent-deep); }
+    .step-head { margin-bottom: 12px; display: flex; align-items: baseline; }
+    .step h3 { margin-bottom: 8px; }
+    .step p { color: var(--muted-light); font-size: var(--t-s); }
+
+    /* ---------- Scope ---------- */
+    
+    
+    
+
+    /* ---------- Science ---------- */
+    .science-now { margin: 0 0 22px; padding-left: 18px; border-left: 2px solid var(--accent-deep); font-size: var(--t-l); font-weight: 400; font-style: italic; line-height: 1.4; max-width: none; color: var(--fg-light); }
+    #science .lead { margin-top: 18px; }
+    
+    .pillars { display: grid; grid-template-columns: 1fr; gap: clamp(24px, 4vw, 40px); counter-reset: pil; }
+    @media (max-width: 720px) { .pillars { grid-template-columns: 1fr; } }
+    .pillar { padding: 24px 0 0; counter-increment: pil; }
+    .pillar::before { content: counter(pil, decimal-leading-zero); display: block; font-size: var(--t-num); font-weight: 700; font-style: italic; letter-spacing: -0.04em; line-height: 1; color: var(--accent-deep); margin-bottom: 16px; }
+    .pillar-mark { display: none; }
+    .pillar h3 { margin-bottom: 8px; }
+    .pillar p { color: var(--muted-light); font-size: var(--t-s); }
+
+    /* ---------- Partners ---------- */
+    .partners { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 48px); counter-reset: par; }
+    @media (max-width: 820px) { .partners { grid-template-columns: 1fr; } }
+    .partner { padding: 24px 0 0; counter-increment: par; }
+    .partner::before { content: counter(par, decimal-leading-zero); display: block; font-size: var(--t-num); font-weight: 700; font-style: italic; letter-spacing: -0.04em; line-height: 1; color: var(--accent-deep); margin-bottom: 16px; }
+    .partner h3 { margin-bottom: 10px; }
+    .partner p { font-size: var(--t-s); color: var(--muted-light); }
+    .partners-cta { margin-top: 36px; }
+
+    /* ---------- Company ---------- */
+    .founders { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 48px); }
+    @media (max-width: 720px) { .founders { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .founders { grid-template-columns: 1fr; } }
+    .founder { display: block; padding: 0; }
+    
+    .founder h3 { font-size: var(--t-xl); font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+    .founder .role { color: var(--accent-deep); font-weight: 400; font-style: italic; font-size: var(--t-m); margin: 6px 0 12px; }
+    .founder p { font-size: 14px; color: var(--muted-light); margin-bottom: 10px; }
+    .founder-name { display: flex; align-items: center; gap: 10px; }
+    .founder .li { display: inline-flex; width: 18px; height: 18px; color: var(--fg-light); }
+    .founder .li:hover { color: var(--accent-deep); }
+    .founder .li svg { width: 100%; height: 100%; }
+
+    /* ---------- Contact ---------- */
+
+    /* ---------- Footer ---------- */
+    .footer { background: var(--bg-light); color: var(--muted-light); padding: 28px 0; font-size: var(--t-xs); }
+    .footer-inner { display: flex; flex-wrap: wrap; gap: 14px 32px; justify-content: space-between; align-items: center; }
+    .footer a { color: var(--fg-light); text-decoration: none; border-bottom: 1px solid var(--line-light); }
+    
+
+    /* ---------- Reveal ---------- */
+    .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+    /* ---------- Layout overrides (stacked, designed) ---------- */
+    .split { grid-template-columns: 1fr; gap: clamp(32px, 4vw, 48px); }
+    .split .lead, .lead { max-width: none; }
+
+    /* Section head: ghost numeral behind the headline */
+    .section-head { position: relative; padding-top: clamp(24px, 4vw, 48px); }
+    .section-head::before {
+      content: counter(sec, decimal-leading-zero);
+      position: absolute; right: 0; top: -0.12em; z-index: 0; pointer-events: none;
+      font-size: clamp(120px, 22vw, 260px); font-weight: 700; font-style: italic; letter-spacing: -0.06em; line-height: 1;
+      color: var(--blue-tint);
+    }
+    .section-head > * { position: relative; z-index: 1; }
+    .section h2 { font-size: clamp(40px, 6vw, 84px); max-width: 18ch; }
+
+
+
+    /* Founders and scope: two generous columns */
+    .founders { gap: clamp(32px, 5vw, 80px); }
+    .founder h3 { font-size: clamp(26px, 3vw, 40px); }
+    
+    
+
+    /* Contact: form spans full width in two columns */
+
+    /* Footer with oversized wordmark */
+    .footer-mark { font-size: clamp(72px, 16vw, 220px); font-weight: 700; letter-spacing: -0.06em; line-height: 0.9; color: var(--blue-tint); margin: 0 0 24px; user-select: none; }
+    .footer { border-top: 0; padding: 40px 0 28px; }
+    /* Scope: two panels */
+    .scope-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 820px) { .scope-cols { grid-template-columns: 1fr; } }
+    .scope-panel { border-radius: 14px; padding: clamp(28px, 3.5vw, 44px); }
+    .scope-panel h3 { font-size: var(--t-xl); font-weight: 700; letter-spacing: -0.03em; margin-bottom: 22px; }
+    .scope-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+    .scope-panel li { position: relative; padding-left: 30px; font-size: 18px; line-height: 1.5; }
+    .scope-panel li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 14px; height: 14px; border-radius: 50%; }
+    .scope-is { background: var(--accent-deep); color: #fff; }
+    .scope-is li::before { background: #fff; }
+    .scope-not { background: var(--bg-tint); color: var(--fg-light); }
+    .scope-not li { color: var(--muted-light); }
+    .scope-not li::before { border: 2px solid var(--muted-light); box-sizing: border-box; }
+    .contact-mail { display: inline-block; margin-top: 24px; font-size: var(--t-xl); font-weight: 700; letter-spacing: -0.02em; color: var(--accent-deep); text-decoration: none; border-bottom: 2px solid var(--accent-deep); padding-bottom: 2px; }
+    .contact-mail:hover { color: var(--fg-light); border-color: var(--fg-light); }
+    /* ---------- Refinements ported from the deployed version ---------- */
+    :root { --line-soft: rgba(10, 11, 15, 0.06); }
+    .nav { background: rgba(255, 255, 255, 0.82); backdrop-filter: saturate(180%) blur(14px); -webkit-backdrop-filter: saturate(180%) blur(14px); }
+    .nav-progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: var(--accent-deep); transition: width .1s linear; }
+    .nav-links a { position: relative; padding: 4px 0; transition: color .2s ease; }
+    .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 1.5px; background: var(--accent-deep); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent-deep); }
+    .nav-links a.active::after, .nav-links a:hover::after { transform: scaleX(1); }
+    @media (max-width: 1000px) { .nav-links a::after { display: none; } }
+
+    .btn { border-radius: 8px; transition: transform .2s ease, background .2s ease, box-shadow .2s ease; }
+    .btn-yellow { box-shadow: 0 1px 2px rgba(51,88,212,0.16), 0 10px 26px -14px rgba(51,88,212,0.5); }
+    .btn-yellow:hover { transform: translateY(-1px); box-shadow: 0 1px 2px rgba(51,88,212,0.22), 0 14px 32px -12px rgba(51,88,212,0.55); }
+
+    .section { position: relative; isolation: isolate; overflow: hidden; }
+    .section + .section { border-top: 1px solid var(--line-soft); }
+    .kicker { gap: 14px; }
+    .kicker::before { content: ""; display: inline-block; width: 2px; height: 1.05em; background: var(--accent-deep); border-radius: 2px; transform: translateY(1px); }
+
+    .hero { position: relative; overflow: hidden; isolation: isolate; }
+    .hero-inner { position: relative; }
+
+    .step { border-top: 1px solid var(--line-light); padding-top: 26px; }
+    .step-head { gap: 14px; }
+
+    .scope-panel { min-height: 320px; display: flex; flex-direction: column; }
+    .scope-is { box-shadow: 0 24px 50px -28px rgba(51,88,212,0.55); }
+    .scope-not { border: 1px solid var(--line-light); }
+
+    .pillar { display: grid; grid-template-columns: 48px 1fr; gap: 22px; align-items: start; border-top: 1px solid var(--line-light); padding-top: 26px; }
+    .pillar::before { display: none; }
+    .pillar-mark { display: block; width: 48px; height: 48px; margin: 4px 0 0; }
+    .pillar-body::before { content: counter(pil, decimal-leading-zero); display: block; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; color: var(--muted-light); margin-bottom: 10px; }
+    @media (max-width: 560px) { .pillar { grid-template-columns: 1fr; } .pillar-mark { width: 40px; height: 40px; } }
+
+    .partners { gap: clamp(20px, 3vw, 28px); }
+    .partner { padding: 32px 28px; border-radius: var(--radius); border: 1px solid var(--line-light); background: var(--bg-light); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+    .partner:hover { transform: translateY(-3px); box-shadow: 0 20px 44px -24px rgba(10,11,15,0.18); border-color: rgba(51,88,212,0.28); }
+    .partner::before { font-size: 13px; font-weight: 600; font-style: normal; letter-spacing: 0.1em; line-height: 1.2; color: var(--accent-deep); margin-bottom: 18px; }
+    .partner h3 { font-size: var(--t-xl); }
+
+    .founder { border-top: 1px solid var(--line-light); padding-top: 28px; }
+    .founder .li { color: var(--muted-light); transition: color .2s ease; }
+
+    .footer { border-top: 1px solid var(--line-light); padding: 44px 0 32px; }
+    .footer a:hover { color: var(--accent-deep); border-color: var(--accent-deep); }
+    .contact-mail { transition: color .2s ease, border-color .2s ease; }
+
+    .reveal { transform: translateY(14px); transition: opacity .6s cubic-bezier(.2,.7,.2,1), transform .6s cubic-bezier(.2,.7,.2,1); }
+    /* ---------- Tighter vertical rhythm ---------- */
+    .section { padding: clamp(56px, 7vw, 88px) 0; }
+    .section-head { padding-top: clamp(8px, 1.5vw, 16px); margin-bottom: clamp(28px, 3.5vw, 44px); }
+    .section-head::before { top: -0.28em; font-size: clamp(100px, 18vw, 200px); }
+    .kicker { margin-bottom: 16px; }
+    .section-head .lead { margin-top: 18px; }
+    .split { gap: clamp(24px, 3.5vw, 40px); }
+    .block { margin-top: clamp(36px, 5vw, 56px); }
+    .lead + .lead { margin-top: 14px; }
+    .steps-title { margin-bottom: 28px; }
+    .scope-panel { min-height: 0; }
+    .partners-cta { margin-top: 28px; }
+    .hero-inner { min-height: 0; padding: clamp(56px, 7vw, 96px) var(--gutter) clamp(56px, 7vw, 88px); }
+    .contact-mail { margin-top: 18px; }
+    .footer { padding: 32px 0 24px; }
+    .footer-mark { margin-bottom: 20px; }
+    /* ---------- Hero art: contour field (the individual) + outward path (progress) ---------- */
+    .hero { position: relative; overflow: hidden; }
+      -webkit-mask-image: linear-gradient(to left, #000 45%, transparent 100%); mask-image: linear-gradient(to left, #000 45%, transparent 100%); }
+    .hero-inner { position: relative; z-index: 1; }
+    .hero-copy { max-width: 58%; }
+    .hero h1 { max-width: 12ch; }
+    @media (max-width: 920px) {
+      .hero-copy { max-width: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .ppath { animation: none; stroke-dashoffset: 0; } .pdot { animation: none; opacity: 1; transform: none; } }
+    /* ---------- Protein backgrounds (procedural SVG, translucent) ---------- */
+      -webkit-mask-image: linear-gradient(to left, #000 50%, transparent 100%); mask-image: linear-gradient(to left, #000 50%, transparent 100%); }
+    .hero, .section { position: relative; overflow: hidden; }
+    .hero > .container, .section > .container { position: relative; z-index: 1; }
+    .section-head::before { z-index: 0; }
+    /* ---------- Editorial upgrade: serif italic accents, letterspaced kickers, art slot ---------- */
+    :root { --font-display: "Instrument Serif", Georgia, "Times New Roman", serif; }
+    html { scroll-padding-top: 96px; }
+    h1 em, h2 em { font-family: var(--font-display); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--accent-deep); font-size: 1.06em; }
+    .section-head::before { font-family: var(--font-display); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+    .kicker { font-size: 13px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; margin-bottom: 20px; }
+    .hero-for { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(22px, 2.2vw, 27px); line-height: 1.3; }
+    .hero-copy { max-width: 58%; }
+    @media (max-width: 920px) { .hero-copy { max-width: none; } }
+    .step-n { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 24px; color: var(--accent-deep); }
+    .step-head::before { display: none; }
+    .science-now { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.38; }
+    .pillar-body::before, .partner::before { letter-spacing: 0.14em; }
+    .founder .role { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 19px; }
+    .contact-mail { font-family: var(--font-display); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+    .footer-mark { font-family: var(--font-display); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+    /* ---------- Photographic section backgrounds ---------- */
+    .bg-photo { position: absolute; right: 0; top: 0; width: min(64%, 940px); height: 100%; z-index: 0; pointer-events: none;
+      background-size: cover; background-position: center right; background-repeat: no-repeat; mix-blend-mode: multiply; opacity: 0.32;
+      -webkit-mask-image: linear-gradient(to left, #000 42%, transparent 94%), linear-gradient(to top, transparent 6%, #000 48%);
+      mask-image: linear-gradient(to left, #000 42%, transparent 94%), linear-gradient(to top, transparent 6%, #000 48%);
+      -webkit-mask-composite: source-in; mask-composite: intersect; }
+    .section-tint .bg-photo { opacity: 0.24; }
+    .hero .bg-photo { opacity: 0.45; }
+    .section > .container, .hero-inner { position: relative; z-index: 1; }
+    @media (max-width: 820px) {
+      .bg-photo { width: 100%; height: 52%; opacity: 0.3; background-position: center top;
+        -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%); mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+        -webkit-mask-composite: source-over; mask-composite: add; }
+      .hero .bg-photo { opacity: 0.38; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Navigation ===== -->
+  <nav class="nav" aria-label="Main">
+    <div class="container nav-inner">
+      <a href="#top" class="logo" aria-label="Proteox home">
+        <span class="logo-text">Proteox</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+      <div class="nav-links" id="nav-links">
+        <a href="#monitoring">Monitoring</a>
+        <a href="#scope">Scope</a>
+        <a href="#science">Science</a>
+        <a href="#partners">Partners</a>
+        <a href="#company">Company</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="nav-progress" aria-hidden="true"></div>
+  </nav>
+
+  <!-- ===== Hero (no section title: the screenshot has to explain everything) ===== -->
+  <header class="hero" id="top">
+    <div class="bg-photo" style="background-image:url(/img/proteox-hero-blue.jpg)" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <h1>Measure the change, <em>not the snapshot.</em></h1>
+        <p class="lead">
+          <span class="hero-for">For clinics running hormone and metabolic therapies.</span>
+          Proteox tracks how your patient's plasma protein profile shifts over time, against their own baseline,
+          so you see the biological effect of a therapy and adjust it on evidence, not only on symptoms.
+        </p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-yellow">Talk to us</a>
+          <a href="#monitoring" class="link-quiet">See how ↓</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ===== 1. Patient monitoring (problem, difference, process) ===== -->
+  <section id="monitoring" class="section">
+    <div class="bg-photo" style="background-image:url(/img/proteox-monitoring-blue.jpg)" aria-hidden="true"></div>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Monitoring</span>
+        <h2>Most biomarker results compare your patient with strangers. <em>Ours compare your patient with themselves.</em></h2>
+      </div>
+      <div class="reveal">
+        <p class="lead">
+          A single blood test cannot tell you what a treatment did.
+          Most proteins vary far more between people than within one person, so one result held against a population range hides whether your patient moved, in which direction, and by how much.
+        </p>
+        <p class="lead">
+          Proteox reads a series of draws against your patient's own baseline instead: ~3,000 plasma proteins each time, not a handful of routine markers.
+          The dose can then follow the measured biological response, not only the symptoms.
+        </p>
+      </div>
+
+      <div class="reveal block">
+        <h3 class="steps-title">Three draws. Your patient as the reference.</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-head"><span class="step-n">Baseline</span></div>
+            <div>
+              <h3>Before treatment.</h3>
+              <p>~3,000 plasma proteins from a standard venous draw, processed by accredited partner laboratories.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-head"><span class="step-n">Follow-up</span></div>
+            <div>
+              <h3>During treatment.</h3>
+              <p>Same platform, same protocol, every draw.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-head"><span class="step-n">Report</span></div>
+            <div>
+              <h3>The change, read against the first draw.</h3>
+              <p>Which of your patient's proteins and pathways changed beyond measurement and biological noise, and which did not. Context from the UK Biobank Pharma Proteomics Project (~54,000 individuals).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2. What Proteox is, and is not ===== -->
+  <section id="scope" class="section scope">
+    <div class="bg-photo" style="background-image:url(/img/proteox-scope-blue.jpg)" aria-hidden="true"></div>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Scope</span>
+        <h2>What Proteox is, <em>and what it is not.</em></h2>
+      </div>
+      <div class="scope-cols reveal">
+        <div class="scope-panel scope-is">
+          <h3>Proteox is</h3>
+          <ul>
+            <li>Longitudinal, within-person monitoring of the plasma proteome</li>
+            <li>A way to see the biological response to a therapy a clinician has already prescribed</li>
+            <li>Clinician-facing reports that sit alongside existing clinical judgement</li>
+            <li>A service with a validation-first roadmap, on established, accredited measurement platforms</li>
+          </ul>
+        </div>
+        <div class="scope-panel scope-not">
+          <h3>Proteox is not</h3>
+          <ul>
+            <li>A diagnostic or screening test</li>
+            <li>An age score or organ clock of any kind</li>
+            <li>A consumer product sold directly to individuals</li>
+            <li>A replacement for standard clinical monitoring</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. Science ===== -->
+  <section id="science" class="section">
+    <div class="bg-photo" style="background-image:url(/img/proteox-science-blue.jpg)" aria-hidden="true"></div>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Science</span>
+        <h2>The question is no longer whether a value is normal. <em>It is whether it changed more than your patient's own noise.</em></h2>
+      </div>
+      <div class="split">
+        <div class="reveal">
+          <p class="science-now">Plasma proteomics has reached population scale. For the first time, thousands of proteins can be followed in one person, draw after draw. That changes the question we can ask.</p>
+          <p class="lead">
+          Every protein drifts in the same person even when nothing has happened.
+          Proteox measures that drift, so a reported change is one your patient does not produce by chance.
+          Two things make this possible.
+        </p>
+        </div>
+      <div class="pillars reveal">
+        <div class="pillar">
+          <svg class="pillar-mark" viewBox="0 0 40 40" aria-hidden="true"><line x1="4" y1="26" x2="36" y2="26" stroke="#3358D4" stroke-width="3" stroke-linecap="round"/><circle cx="14" cy="26" r="4" fill="#0A0B0F"/></svg>
+          <div class="pillar-body">
+            <h3>Within-person variation</h3>
+          <p>Estimated protein by protein, so the threshold for a real change is specific to each protein, not one cut-off for the whole panel.</p>
+          </div>
+        </div>
+        <div class="pillar">
+          <svg class="pillar-mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16" fill="none" stroke="#0A0B0F" stroke-opacity="0.18" stroke-width="2"/><circle cx="20" cy="20" r="9" fill="none" stroke="#0A0B0F" stroke-opacity="0.35" stroke-width="2"/><circle cx="20" cy="20" r="3.5" fill="#3358D4"/></svg>
+          <div class="pillar-body">
+            <h3>Population context</h3>
+          <p>UK Biobank Pharma Proteomics Project data (~54,000 individuals, ~3,000 proteins) shows where your patient sits, and how unusual a change is.</p>
+          </div>
+        </div>
+      </div>
+      </div>
+      <!-- Publications & methods: intentionally empty until the first preprint exists. Do not add placeholder content here. -->
+    </div>
+  </section>
+
+  <!-- ===== 5. Who we work with ===== -->
+  <section id="partners" class="section section-tint">
+    <div class="bg-photo" style="background-image:url(/img/proteox-partners-blue.jpg)" aria-hidden="true"></div>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Partners</span>
+        <h2><em>Three</em> kinds of partner.</h2>
+      </div>
+      <div class="partners reveal">
+        <div class="partner">
+          <h3>Clinics</h3>
+          <p>You run hormone and metabolic therapies. We give you each patient's measured biological response, from the first draw, alongside the monitoring you already do.</p>
+        </div>
+        <div class="partner">
+          <h3>Clinical researchers</h3>
+          <p>You study treatment response or intervention effects in longitudinal designs. We give you an analytical framework built for within-person questions.</p>
+        </div>
+        <div class="partner">
+          <h3>Pharma and biotech</h3>
+          <p>You need pharmacodynamic readouts across a trial or a real-world cohort. We give you the proteomic analysis, on established, accredited platforms.</p>
+        </div>
+      </div>
+      <div class="partners-cta reveal">
+        <a href="#contact" class="btn btn-yellow">Start a conversation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 6. Company ===== -->
+  <section id="company" class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Company</span>
+        <h2>The interpretation <em>is</em> the company.</h2>
+      </div>
+      <div class="split">
+        <div class="reveal">
+          <p class="lead">Proteox Ltd is a UK company founded in 2025, operating from Bilbao, Spain and the UK.</p>
+          <p class="lead">We do not run a laboratory. Measurements run on established, accredited platforms through partner laboratories. A clinic adds no new lab; we add no new assay.</p>
+          <p class="lead">Our work is the design, the reference framework and the interpretation.</p>
+          <p class="lead">We report what the data support, and we publish our methods.</p>
+        </div>
+        <div class="founders reveal">
+          <!-- No photos. If real photos are added later, both founders get the same treatment (neutral background, same light). -->
+          <article class="founder">
+            <div>
+              <div class="founder-name"><h3>Pablo Martín</h3><a class="li" href="https://www.linkedin.com/in/pablomartinbaniandres/" target="_blank" rel="noopener noreferrer" aria-label="Pablo Martín on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></div>
+              <p class="role">Co-founder, commercial and operations</p>
+              <p>DPhil in Chemical Biology, University of Oxford (nanopore protein sensing). Previously a scientist at Oxford Nanopore Technologies.</p>
+              
+            </div>
+          </article>
+          <article class="founder">
+            <div>
+              <div class="founder-name"><h3>Sara Navarro</h3><a class="li" href="https://www.linkedin.com/in/saranavarromedina/" target="_blank" rel="noopener noreferrer" aria-label="Sara Navarro on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg></a></div>
+              <p class="role">Co-founder, analytics and scientific design</p>
+              <p>Data scientist; MSc Data Science and MSc Machine Learning; earlier career in business strategy. Leads the statistical and reference architecture.</p>
+              
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 7. Contact ===== -->
+  <section id="contact" class="section section-tint">
+    <div class="bg-photo" style="background-image:url(/img/proteox-hero-blue.jpg)" aria-hidden="true"></div>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Contact</span>
+        <h2>Start with <em>your first patient's</em> baseline.</h2>
+      </div>
+      <div class="reveal">
+        <p class="lead">
+          We are working with a small number of founding clinical partners.
+          If you run a clinic, a research group or a pharma programme where within-person proteomic monitoring fits, write to us.
+        </p>
+        <a class="contact-mail" href="mailto:pablo@proteox.com">pablo@proteox.com</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container"><div class="footer-mark" aria-hidden="true">Proteox</div></div>
+    <div class="container footer-inner">
+      <a href="#top" class="logo" aria-label="Proteox home" style="border:0;">
+        <span class="logo-text">Proteox</span>
+      </a>
+      <div>
+        Proteox Ltd · Registered in England and Wales, company no. 16899778 · 20 Wenlock Road, London N1 7GU ·
+        <a href="/privacy">Privacy notice</a> · © 2026
+      </div>
+    </div>
+  </footer>
+
+  <!-- No analytics on this site, so no cookie banner (brief, checklist). Add one only if analytics is introduced. -->
+
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav-toggle');
+      var links = document.getElementById('nav-links');
+      toggle.addEventListener('click', function () {
+        var open = links.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      links.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') { links.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+      });
+
+      // In-page navigation that survives SPA routers: scroll by JS, keep the hash in the URL
+      var NAV_OFFSET = 64;
+      function scrollToId(id) {
+        var el = document.getElementById(id);
+        if (!el) return false;
+        // land on the section's headline, not on its top padding
+        var anchor = el.querySelector('.kicker') || el.querySelector('.section-head') || el;
+        var top = anchor.getBoundingClientRect().top + window.pageYOffset - NAV_OFFSET - 24;
+        window.scrollTo({ top: top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        try { history.replaceState(null, '', '#' + id); } catch (e) {}
+        return true;
+      }
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[href^="#"]');
+        if (!a) return;
+        var id = a.getAttribute('href').slice(1);
+        if (!id) return;
+        if (id === 'top') { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); try { history.replaceState(null, '', ' '); } catch (err) {} return; }
+        if (scrollToId(id)) { e.preventDefault(); e.stopPropagation(); }
+      }, true);
+      if (location.hash && location.hash.length > 1) { setTimeout(function () { scrollToId(location.hash.slice(1)); }, 50); }
+
+      var prog = document.querySelector('.nav-progress');
+      var secs = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+      var navA = Array.prototype.slice.call(links.querySelectorAll('a[href^="#"]'));
+      function onScroll() {
+        var h = document.documentElement;
+        var max = h.scrollHeight - h.clientHeight;
+        if (prog) prog.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+        var cur = null;
+        secs.forEach(function (sec) { if (sec.getBoundingClientRect().top <= 120) cur = sec.id; });
+        navA.forEach(function (a) { a.classList.toggle('active', a.getAttribute('href') === '#' + cur); });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+      if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+      } else {
+        document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+      }
+    })();
+  </script>
+</body>
+</html>
